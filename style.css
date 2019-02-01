@@ -1,0 +1,23 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: black;
+	color: white;
+	font-family: Arial;
+	overflow: hidden;
+}
+button, select {
+	color: black;
+}
+#controls {
+	position: fixed;
+	height: 100%;
+	//padding-left: 10px;
+	//padding-top: 10px;
+	background: linear-gradient(90deg, black, rgba(0, 0, 0, 0));
+}
+canvas {
+	margin: 0;
+	padding: 0;
+	cursor: crosshair;
+}

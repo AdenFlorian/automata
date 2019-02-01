@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" >
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.js"></script>
+	<script src="StartingCells.js"></script>
+	<script src="automata.js"></script>
+	<script src="CellSpawner.js"></script>
+	<script src="app.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap-theme.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+	<div id="controls">
+		<div>
+			<input type="checkbox" id="button-fade" onchange="onCheckFade(this)">
+				Fade Dead Pixels
+			</input>
+		</div>
+
+		<div>
+			<select id="simselect" onchange="onChangeSimSelect(this)">
+				<option value="conway">Conway's Game of Life</option>
+				<option value="brian">Brian's Brain</option>
+				<option value="langton">Langton's Ant</option>
+			</select>
+		</div>
+
+		<div>
+			<select id="spawnselect" onchange="onChangeSpawnSelect(this)">
+				<option value="2x2">2x2</option>
+				<option value="1x2">1x2</option>
+				<option value="random">Random</option>
+				<option value="langton">Langton's Ant</option>
+			</select>
+		</div>
+
+		<div>
+			<select id="sizeselect" onchange="onChangeSizeSelect(this)">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="4">4</option>
+				<option value="8">8</option>
+				<option value="16">16</option>
+				<option value="32">32</option>
+			</select>
+		</div>
+
+		<div>
+			<select id="clickSpawnSelect" onchange="onClickSpawnSelect(this)">
+				<option value="gliderStar">Glider Star</option>
+				<option value="twoByTwo">2x2</option>
+				<option value="oneByTwo">1x2</option>
+			</select>
+		</div>
+
+		<div>
+			<button onclick="onClickRestartButton()">
+				Restart Sim
+			</button>
+		</div>
+
+		<div>
+			<button id="mode-button" onclick="onClickModeButton(this)">
+				Simulator
+			</button>
+		</div>
+
+		<div>
+			<span>tick: </span>
+			<span id="time">0</span>
+		</div>
+
+		<div>
+			<span>FPS: </span>
+			<span id="fps">0</span>
+		</div>
+
+		<div>
+			<span>Alive Cells: </span>
+			<span id="aliveCells">0</span>
+		</div>
+
+		<div>
+			<span>New Cells: </span>
+			<span id="newCells">0</span>
+		</div>
+	</div>
+
+	<canvas id="canvas" width="1900" height="900" mousedown="onMouseDown()">
+		Browser does not support canvas
+	</canvas>
+
+</body>
+</html>
