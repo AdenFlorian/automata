@@ -221,7 +221,16 @@ function copyNewGridToGrid() {
 	//newGrid = swap(grid, grid = newGrid);
 }
 
+let pixelSizeSquared
+let pixelSize4
+let y2Mod
+let iMod
+
 function gridToCanvas() {
+	pixelSizeSquared = pixelSize * pixelSize
+	pixelSize4 = pixelSize * 4
+	y2Mod = 4 * grid.width * pixelSizeSquared
+	iMod = 4 * grid.width * pixelSize
 	// Iterate through each grid element
 	for (var y = 0; y < grid.height; y++) {
 		for (var x = 0; x < grid.width; x++) {
@@ -238,22 +247,25 @@ function gridToCanvas() {
 	context.putImageData(imgData, 0, 0);
 }
 
+const modA = 255 / 4
+
 function colorPixel(x, y) {
-	var r = (x / grid.width) * 255;
-	var g = (y / grid.height) * 255;
-	var b = ((grid.width - x) / grid.width) * 255;
+	let r = (x / grid.width) * 255;
+	let g = (y / grid.height) * 255;
+	let b = ((grid.width - x) / grid.width) * 255;
 	const middleHoz = (-1 * Math.abs(((x - (grid.width / 2)) * (1 / (grid.width / 6))))) + 1;
 	const middleVer = (-1 * Math.abs(((y - (grid.height / 2)) * (1 / (grid.height / 6))))) + 1;
-	const middle = Math.max((middleHoz + middleVer) * (255 / 4), 0);
+	const middle = Math.max((middleHoz + middleVer) * modA, 0);
 	r += middle;
 	g += middle;
 	b += middle;
-	const x2 = x * 4 * pixelSize;
-	const y2 = y * 4 * grid.width * pixelSize * pixelSize;
-	var offset;
-	for (var i = 0; i < pixelSize; i++) {
-		for (var j = 0; j < pixelSize; j++) {
-			offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
+	const x2 = x * pixelSize4;
+	const y2 = y * y2Mod;
+	let offset;
+	const x2y2 = x2 + y2
+	for (let i = 0; i < pixelSize; i++) {
+		for (let j = 0; j < pixelSize; j++) {
+			offset = x2y2 + (i * iMod) + (j * 4);
 			imgData.data[0 + offset] = r;
 			imgData.data[1 + offset] = g;
 			imgData.data[2 + offset] = b;
@@ -262,13 +274,14 @@ function colorPixel(x, y) {
 }
 
 function fadePixel(x, y) {
-	const rgb = getRGB(x, y);
-	const x2 = x * 4 * pixelSize;
-	const y2 = y * 4 * grid.width * pixelSize * pixelSize;
+	const x2 = x * pixelSize4;
+	const y2 = y * y2Mod;
+	const rgb = getRGB(x2, y2);
 	var offset;
+	const x2y2 = x2 + y2
 	for (var i = 0; i < pixelSize; i++) {
 		for (var j = 0; j < pixelSize; j++) {
-			offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
+			offset = x2y2 + (i * iMod) + (j * 4);
 			imgData.data[0 + offset] = rgb.r;
 			imgData.data[1 + offset] = rgb.g;
 			imgData.data[2 + offset] = rgb.b;
@@ -276,10 +289,10 @@ function fadePixel(x, y) {
 	}
 }
 
-function getRGB(x, y) {
+function getRGB(x2, y2) {
 	if (!fadeEnabled) return {r: 0, g: 0, b: 0}
 
-	const offset = (x * 4 * pixelSize) + (y * 4 * grid.width * pixelSize * pixelSize);
+	const offset = x2 + y2
 
 	return {
 		r: imgData.data[0 + offset] - fadeSpeed,
