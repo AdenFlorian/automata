@@ -169,7 +169,7 @@ function draw() {
 	aliveCellCountElement.text(aliveCellCount);
 	newCellCountElement.text(newCellCount);
 
-	setTimeout(draw, 1000 / targetFPS);
+	requestAnimationFrame(draw);
 }
 
 function getFPS() {
@@ -181,8 +181,9 @@ function getFPS() {
 }
 
 function spawnClickedPixels() {
+	var cell;
 	for (var i = 0; i < spawnGrid.length; i++) {
-		var cell = spawnGrid[i];
+		cell = spawnGrid[i];
 		if (cell.x < 0 || cell.x > grid.width - 1 ||
 			cell.y < 0 || cell.y > grid.height - 1) {
 			console.log("spawn pixels out of bounds, click closer to center!");
@@ -233,17 +234,18 @@ function colorPixel(x, y) {
 	var r = (x / grid.width) * 255;
 	var g = (y / grid.height) * 255;
 	var b = ((grid.width - x) / grid.width) * 255;
-	var middleHoz = (-1 * Math.abs(((x - (grid.width / 2)) * (1 / (grid.width / 6))))) + 1;
-	var middleVer = (-1 * Math.abs(((y - (grid.height / 2)) * (1 / (grid.height / 6))))) + 1;
-	var middle = Math.max((middleHoz + middleVer) * (255 / 4), 0);
+	const middleHoz = (-1 * Math.abs(((x - (grid.width / 2)) * (1 / (grid.width / 6))))) + 1;
+	const middleVer = (-1 * Math.abs(((y - (grid.height / 2)) * (1 / (grid.height / 6))))) + 1;
+	const middle = Math.max((middleHoz + middleVer) * (255 / 4), 0);
 	r += middle;
 	g += middle;
 	b += middle;
-	var x2 = x * 4 * pixelSize;
-	var y2 = y * 4 * grid.width * pixelSize * pixelSize;
+	const x2 = x * 4 * pixelSize;
+	const y2 = y * 4 * grid.width * pixelSize * pixelSize;
+	var offset;
 	for (var i = 0; i < pixelSize; i++) {
 		for (var j = 0; j < pixelSize; j++) {
-			var offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
+			offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
 			imgData.data[0 + offset] = r;
 			imgData.data[1 + offset] = g;
 			imgData.data[2 + offset] = b;
@@ -252,37 +254,30 @@ function colorPixel(x, y) {
 }
 
 function fadePixel(x, y) {
-	var rgb = getRGB(x, y);
-	var x2 = x * 4 * pixelSize;
-	var y2 = y * 4 * grid.width * pixelSize * pixelSize;
+	const rgb = getRGB(x, y);
+	const x2 = x * 4 * pixelSize;
+	const y2 = y * 4 * grid.width * pixelSize * pixelSize;
+	var offset;
 	for (var i = 0; i < pixelSize; i++) {
 		for (var j = 0; j < pixelSize; j++) {
-			var offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
+			offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
 			imgData.data[0 + offset] = rgb.r;
 			imgData.data[1 + offset] = rgb.g;
 			imgData.data[2 + offset] = rgb.b;
 		}
 	}
-	return true;
 }
 
 function getRGB(x, y) {
-	var offset = (x * 4 * pixelSize) + (y * 4 * grid.width * pixelSize * pixelSize);
+	if (!fadeEnabled) return {r: 0, g: 0, b: 0}
 
-	if (fadeEnabled) {
-		var rgb = {
-			r: imgData.data[0 + offset] - fadeSpeed,
-			g: imgData.data[1 + offset] - fadeSpeed,
-			b: imgData.data[2 + offset] - fadeSpeed
-		}
-	} else {
-		var rgb = {
-			r: 0,
-			g: 0,
-			b: 0
-		}
+	const offset = (x * 4 * pixelSize) + (y * 4 * grid.width * pixelSize * pixelSize);
+
+	return {
+		r: imgData.data[0 + offset] - fadeSpeed,
+		g: imgData.data[1 + offset] - fadeSpeed,
+		b: imgData.data[2 + offset] - fadeSpeed
 	}
-	return rgb;
 }
 
 function onMouseDown(event) {

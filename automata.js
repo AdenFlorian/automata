@@ -96,15 +96,13 @@ aumaBrian.think = function () {
 	// Iterate through each grid element
 	for (var y = 0; y < grid.height; y++) {
 		for (var x = 0; x < grid.width; x++) {
-			// Count alive neighbors
-			var aliveNeighborCount = this.countNeighbors(x, y, 'alive');
 			var state = grid[y][x].state;
 			if (state === "alive") {
 				aliveCellCount++;
 				newGrid[y][x].state = "dying";
 			} else if (state === "dying") {
 				newGrid[y][x].state = "dead";
-			} else if (aliveNeighborCount === 2) {
+			} else if (this.countNeighbors(x, y, 'alive') === 2) {
 				newGrid[y][x].state = "alive";
 				newCellCount++;
 			}
