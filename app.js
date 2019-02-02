@@ -47,18 +47,22 @@ var restartNextTick = false;
 var modes = ['simulator', 'creator'];
 var mode = 'simulator';
 
-var cell = function (x, y, size, color) {
-	this.x = x;
-	this.y = y;
-	this.size = size;
-	this.color = color;
+class cell {
+	constructor(x, y, size, color) {
+		this.x = x;
+		this.y = y;
+		this.size = size;
+		this.color = color;
+	}
 }
 
-var color = function (r, g, b, a) {
-	this.r = r;
-	this.g = g;
-	this.b = b;
-	this.a = a;
+class color {
+	constructor(r, g, b, a) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
+	}
 }
 
 $(function () {
