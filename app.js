@@ -2,167 +2,171 @@
  *	@author David Valachovic
  */
 
-"use strict";
+"use strict"
 
 // TODO Make a selector for choosing a structure to spawn when clicking
 
 // Grids
-var grid = [];
-var newGrid = [];
-var spawnGrid = [];
+var grid = []
+var newGrid = []
+var spawnGrid = []
 
 // Canvas vars
-var context;
-var canvas;
-var imgData;
+var context
+var canvas
+var imgData
 
-var time = 0;
-var timeElement;
-var last5DeltaTimes = [];
-var fpsElement;
-var lastTime;
-var timeStep = 1;	// How many steps to think of before rendering
+var time = 0
+var timeElement
+var last5DeltaTimes = []
+var fpsElement
+var lastTime
+var timeStep = 1	// How many steps to think of before rendering
 
 // Settings
-var pixelSizes = [1, 2, 4, 8, 16, 32];
-var pixelSize = 2;	// Multiples of 2 (1, 2, 4, 8, 16, etc.)
-var nextPixelSize;
-var targetFPS = 999;
-var actualFPS;
-var fadeSpeed = 1;	// 1 to 255
-var fadeEnabled = true;
-var automaton;
-var startingConfiguration;
+var pixelSizes = [1, 2, 4, 8, 16, 32]
+var pixelSize = 2	// Multiples of 2 (1, 2, 4, 8, 16, etc.)
+var nextPixelSize
+var targetFPS = 999
+var actualFPS
+var fadeSpeed = 1	// 1 to 255
+var fadeEnabled = true
+var automaton
+var startingConfiguration
 
-var aliveCellCount = 0;
-var aliveCellCountElement;
-var newCellCount = 0;
-var newCellCountElement;
+var aliveCellCount = 0
+var aliveCellCountElement
+var newCellCount = 0
+var newCellCountElement
+
+const optionName = Object.freeze({
+	pixelSize: 'pixelSize'
+})
 
 // On click spawn cell selected structure
-var selectedClickSpawnStructureElement;
+var selectedClickSpawnStructureElement
 
 // Flags
-var restartNextTick = false;
-var modes = ['simulator', 'creator'];
-var mode = 'simulator';
+var restartNextTick = false
+var modes = ['simulator', 'creator']
+var mode = 'simulator'
 
 class cell {
 	constructor(x, y, size, color) {
-		this.x = x;
-		this.y = y;
-		this.size = size;
-		this.color = color;
+		this.x = x
+		this.y = y
+		this.size = size
+		this.color = color
 	}
 }
 
 class color {
 	constructor(r, g, b, a) {
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
+		this.r = r
+		this.g = g
+		this.b = b
+		this.a = a
 	}
 }
 
-$(function () {
+window.addEventListener('DOMContentLoaded', function () {
 	// Set DOM elements variables
-	canvas = document.getElementById('canvas');
-	context = canvas.getContext("2d");
-	timeElement = $('#time');
-	fpsElement = $('#fps');
-	aliveCellCountElement = $('#aliveCells');
-	newCellCountElement = $('#newCells');
-	selectedClickSpawnStructureElement = $('#clickSpawnSelect');
-	lastTime = getTimeMS();
+	canvas = document.getElementById('canvas')
+	context = canvas.getContext('2d')
+	timeElement = document.getElementById('time')
+	fpsElement = document.getElementById('fps')
+	aliveCellCountElement = document.getElementById('aliveCells')
+	newCellCountElement = document.getElementById('newCells')
+	selectedClickSpawnStructureElement = document.getElementById('clickSpawnSelect')
+	lastTime = getTimeMS()
 
 	// Set random settings
-	automaton = automata[automataNames[randomInt(automataNames.length - 1)].toString()];
-	automaton = automata["brian"];
-	pixelSize = pixelSizes[randomInt(pixelSizes.length - 1)];
-	pixelSize = 2;
-	nextPixelSize = pixelSize;
-	startingConfiguration = automaton.startingConfigs[randomInt(automaton.startingConfigs.length - 1)];
-	startingConfiguration = automaton.startingConfigs[1];
-	console.log(automaton.shortName);
+	// automaton = automata[automataNames[randomInt(automataNames.length - 1)].toString()]
+	automaton = automata['brian']
+	// pixelSize = pixelSizes[randomInt(pixelSizes.length - 1)]
+	pixelSize = parseInt(getOption(optionName.pixelSize)) || 2
+	nextPixelSize = pixelSize
+	// startingConfiguration = automaton.startingConfigs[randomInt(automaton.startingConfigs.length - 1)]
+	startingConfiguration = automaton.startingConfigs[1]
+	console.log(automaton.shortName)
 
 	// Setting event listeners
-	canvas.addEventListener("mousedown", onMouseDown, false);
+	canvas.addEventListener('mousedown', onMouseDown, false)
 
 	// Initialize UI
-	$("#button-fade").attr('checked', fadeEnabled);
-	console.log(startingConfiguration.toString());
-	$("#spawnSelect").val(startingConfiguration.name);
-	$("#simSelect").val(automaton.shortName);
-	$("#sizeSelect").val(pixelSize);
-	$('#mode-button').val(mode);
+	document.getElementById('button-fade').checked = fadeEnabled
+	console.log(startingConfiguration)
+	document.getElementById('spawnSelect').value = startingConfiguration.name
+	document.getElementById('simSelect').value = automaton.shortName
+	document.getElementById('sizeSelect').value = pixelSize
+	document.getElementById('mode-button').value = mode
 
-	scaleCanvasToWindow(context);
-	setGridSizeFromCanvas(grid, canvas, pixelSize);
+	scaleCanvasToWindow(context)
+	setGridSizeFromCanvas(grid, canvas, pixelSize)
 
-	init2DArray(grid);
-	init2DArray(newGrid);
+	init2DArray(grid)
+	init2DArray(newGrid)
 
 	// Creates an ImageData object to store pixels to go on canvas
-	imgData = context.createImageData(canvas.width, canvas.height);
+	imgData = context.createImageData(canvas.width, canvas.height)
 	// Set all pixels to black
-	fillImgData(imgData, new color(0, 0, 0, 255));
+	fillImgData(imgData, new color(0, 0, 0, 255))
 
-	spawnStartingConfiguration();
+	spawnStartingConfiguration()
 
 	// Draw grid on canvas once before starting draw loop
-	gridToCanvas();
+	gridToCanvas()
 
 	// Start draw loop
-	draw();
-});
+	draw()
+}, false)
 
 function restartSimulation() {
-	restartNextTick = false;
-	pixelSize = nextPixelSize;
-	scaleCanvasToWindow(context);
-	setGridSizeFromCanvas(grid, canvas, pixelSize);
+	restartNextTick = false
+	pixelSize = parseInt(nextPixelSize)
+	scaleCanvasToWindow(context)
+	setGridSizeFromCanvas(grid, canvas, pixelSize)
 
-	init2DArray(grid);
-	init2DArray(newGrid);
+	init2DArray(grid)
+	init2DArray(newGrid)
 
 	// Creates an ImageData object to store pixels to go on canvas
-	imgData = context.createImageData(canvas.width, canvas.height);
+	imgData = context.createImageData(canvas.width, canvas.height)
 	// Set all pixels to black
-	fillImgData(imgData, new color(0, 0, 0, 255));
+	fillImgData(imgData, new color(0, 0, 0, 255))
 
-	spawnStartingConfiguration();
+	spawnStartingConfiguration()
 
 	// Draw grid on canvas once before starting draw loop
-	gridToCanvas();
+	gridToCanvas()
 }
 
 function spawnStartingConfiguration() {
-	startingConfiguration.spawn();
+	startingConfiguration.spawn()
 }
 
 function draw() {
-	time++;
-	timeElement.text(time);
+	time++
+	timeElement.innerText = time
 
-	var timestamp = getTimeMS();
+	var timestamp = getTimeMS()
 
-	last5DeltaTimes.unshift(timestamp - lastTime);
+	last5DeltaTimes.unshift(timestamp - lastTime)
 
-	lastTime = timestamp;
+	lastTime = timestamp
 
 	if (last5DeltaTimes.length > 5) {
-		last5DeltaTimes.pop();
+		last5DeltaTimes.pop()
 	}
 
-	actualFPS = getFPS().toPrecision(4);
+	actualFPS = getFPS().toPrecision(4)
 
-	fpsElement.text(actualFPS);
+	fpsElement.innerText = actualFPS
 
 	if (restartNextTick) {
-		restartSimulation();
+		restartSimulation()
 	} else {
-		spawnClickedPixels();
+		spawnClickedPixels()
 		for (var i = 0; i < timeStep; i++) {
 			automaton.think();
 			copyNewGridToGrid();
@@ -170,8 +174,8 @@ function draw() {
 		gridToCanvas();
 	}
 
-	aliveCellCountElement.text(aliveCellCount);
-	newCellCountElement.text(newCellCount);
+	aliveCellCountElement.innerText = aliveCellCount;
+	newCellCountElement.innerText = newCellCount;
 
 	requestAnimationFrame(draw);
 }
@@ -285,7 +289,7 @@ function getRGB(x, y) {
 }
 
 function onMouseDown(event) {
-	CellSpawner.spawnStuff(selectedClickSpawnStructureElement.val(), event.x - canvas.offsetLeft, event.y - canvas.offsetTop);
+	CellSpawner.spawnStuff(selectedClickSpawnStructureElement.value, event.x - canvas.offsetLeft, event.y - canvas.offsetTop);
 }
 
 function onCheckFade() {
@@ -297,7 +301,7 @@ function onChangeSimSelect(element) {
 }
 
 function onChangeSpawnSelect(element) {
-	startingConfiguration = element.value;
+	startingConfiguration = StartingCells[element.value];
 }
 
 function onClickRestartButton() {
@@ -306,6 +310,7 @@ function onClickRestartButton() {
 
 function onChangeSizeSelect(element) {
 	nextPixelSize = element.value;
+	setOption(optionName.pixelSize, nextPixelSize)
 	console.log('nextPixelSize: ' + nextPixelSize);
 }
 
@@ -362,3 +367,11 @@ function switchToCreatorMode() {mode = 'creator';}
 function getTimeMS() {return new Date().getTime();}
 
 function randomInt(max) {return Math.round(Math.random() * max);}
+
+function getOption(name) {
+	return window.localStorage.getItem(name)
+}
+
+function setOption(name, value) {
+	return window.localStorage.setItem(name, value)
+}

@@ -50,7 +50,7 @@ var StartingCells = {
 	},
 
 	twoByTwo: {
-		name: '2x2',
+		name: 'twoByTwo',
 		spawn: function () {
 			for (var x = 0; x < grid.width; x++) {
 				for (var y = 0; y < grid.height; y++) {
@@ -68,7 +68,7 @@ var StartingCells = {
 	},
 
 	oneByTwo: {
-		name: '1x2',
+		name: 'oneByTwo',
 		spawn: function () {
 			for (var x = 0; x < grid.width; x++) {
 				for (var y = 0; y < grid.height; y++) {
