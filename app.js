@@ -2,9 +2,9 @@
  *	@author David Valachovic
  */
 
- "use strict";
+"use strict";
 
- // TODO Make a selector for choosing a structure to spawn when clicking
+// TODO Make a selector for choosing a structure to spawn when clicking
 
 // Grids
 var grid = [];
@@ -25,7 +25,7 @@ var timeStep = 1;	// How many steps to think of before rendering
 
 // Settings
 var pixelSizes = [1, 2, 4, 8, 16, 32];
-var pixelSize =  2;	// Multiples of 2 (1, 2, 4, 8, 16, etc.)
+var pixelSize = 2;	// Multiples of 2 (1, 2, 4, 8, 16, etc.)
 var nextPixelSize;
 var targetFPS = 999;
 var actualFPS;
@@ -47,21 +47,21 @@ var restartNextTick = false;
 var modes = ['simulator', 'creator'];
 var mode = 'simulator';
 
-var cell = function(x, y, size, color){
+var cell = function (x, y, size, color) {
 	this.x = x;
 	this.y = y;
 	this.size = size;
 	this.color = color;
 }
 
-var color = function(r, g, b, a) {
+var color = function (r, g, b, a) {
 	this.r = r;
 	this.g = g;
 	this.b = b;
 	this.a = a;
 }
 
-$(function() {
+$(function () {
 	// Set DOM elements variables
 	canvas = document.getElementById('canvas');
 	context = canvas.getContext("2d");
@@ -88,11 +88,11 @@ $(function() {
 	// Initialize UI
 	$("#button-fade").attr('checked', fadeEnabled);
 	console.log(startingConfiguration.toString());
-	$("#spawnselect").val(startingConfiguration.name);
-	$("#simselect").val(automaton.shortName);
-	$("#sizeselect").val(pixelSize);
+	$("#spawnSelect").val(startingConfiguration.name);
+	$("#simSelect").val(automaton.shortName);
+	$("#sizeSelect").val(pixelSize);
 	$('#mode-button').val(mode);
-	
+
 	scaleCanvasToWindow(context);
 	setGridSizeFromCanvas(grid, canvas, pixelSize);
 
@@ -126,7 +126,7 @@ function restartSimulation() {
 	imgData = context.createImageData(canvas.width, canvas.height);
 	// Set all pixels to black
 	fillImgData(imgData, new color(0, 0, 0, 255));
-	
+
 	spawnStartingConfiguration();
 
 	// Draw grid on canvas once before starting draw loop
@@ -169,7 +169,7 @@ function draw() {
 	aliveCellCountElement.text(aliveCellCount);
 	newCellCountElement.text(newCellCount);
 
-    setTimeout(draw, 1000 / targetFPS);
+	setTimeout(draw, 1000 / targetFPS);
 }
 
 function getFPS() {
@@ -185,7 +185,7 @@ function spawnClickedPixels() {
 		var cell = spawnGrid[i];
 		if (cell.x < 0 || cell.x > grid.width - 1 ||
 			cell.y < 0 || cell.y > grid.height - 1) {
-			console.log("spawn pixels out ofbounds, click closer to center!");
+			console.log("spawn pixels out of bounds, click closer to center!");
 		} else if (automaton.shortName === "Langton's Ant") {
 			grid[cell.y][cell.x].state = "antOnDeadUp";
 		} else {
@@ -195,7 +195,7 @@ function spawnClickedPixels() {
 	spawnGrid = [];
 }
 
-var swap = function (x){return x};
+var swap = function (x) {return x};
 
 function copyNewGridToGrid() {
 	// Copy newGrid over grid
@@ -233,8 +233,8 @@ function colorPixel(x, y) {
 	var r = (x / grid.width) * 255;
 	var g = (y / grid.height) * 255;
 	var b = ((grid.width - x) / grid.width) * 255;
-	var middleHoz = (-1 * Math.abs( ((x - (grid.width / 2)) * (1 / (grid.width / 6)) ))) + 1;
-	var middleVer = (-1 * Math.abs( ((y - (grid.height / 2)) * (1 / (grid.height / 6)) ))) + 1;
+	var middleHoz = (-1 * Math.abs(((x - (grid.width / 2)) * (1 / (grid.width / 6))))) + 1;
+	var middleVer = (-1 * Math.abs(((y - (grid.height / 2)) * (1 / (grid.height / 6))))) + 1;
 	var middle = Math.max((middleHoz + middleVer) * (255 / 4), 0);
 	r += middle;
 	g += middle;
@@ -267,8 +267,8 @@ function fadePixel(x, y) {
 }
 
 function getRGB(x, y) {
-	var offset = (x * 4 * pixelSize) + (y * 4 * grid.width * pixelSize * pixelSize) ;
-	
+	var offset = (x * 4 * pixelSize) + (y * 4 * grid.width * pixelSize * pixelSize);
+
 	if (fadeEnabled) {
 		var rgb = {
 			r: imgData.data[0 + offset] - fadeSpeed,
@@ -322,7 +322,7 @@ function setGridSizeFromCanvas(grid, canvas, pixelSize) {
 }
 
 function init2DArray(array) {
-	// Initialize to 2 dimentional arrays
+	// Initialize to 2 dimensional arrays
 	for (var i = 0; i < grid.width; i++) {
 		array[i] = [];
 	}
@@ -334,7 +334,7 @@ function init2DArray(array) {
 }
 
 function fillImgData(imgData, color) {
-	for (var i = 0; i < imgData.data.length; i+=4) {
+	for (var i = 0; i < imgData.data.length; i += 4) {
 		imgData.data[i + 0] = 0;
 		imgData.data[i + 1] = 0;
 		imgData.data[i + 2] = 0;
@@ -356,10 +356,10 @@ function onClickSpawnSelect(element) {
 	//CellSpawner[element.value](event.x - canvas.offsetLeft, event.y - canvas.offsetTop);
 }
 
-function switchToSimulatorMode() { mode = 'simulator'; }
+function switchToSimulatorMode() {mode = 'simulator';}
 
-function switchToCreatorMode() { mode = 'creator'; }
+function switchToCreatorMode() {mode = 'creator';}
 
-function getTimeMS() { return new Date().getTime(); }
+function getTimeMS() {return new Date().getTime();}
 
-function randomInt(max) { return Math.round(Math.random() * max); }
+function randomInt(max) {return Math.round(Math.random() * max);}

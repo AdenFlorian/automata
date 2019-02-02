@@ -1,13 +1,13 @@
-var automaton = function(shortName, longName, startingConfigs) {
+var automaton = function (shortName, longName, startingConfigs) {
 
 	this.startingConfigs = startingConfigs;
 	this.shortName = shortName;
 	this.longName = longName;
 
 	// Assigning default neighbors finding function
-	this.countNeighbors = function(x, y, state) {
+	this.countNeighbors = function (x, y, state) {
 		var aliveNeighborCount = 0;
-		
+
 		if (y > 0) {
 			if (x > 0 && grid[y - 1][x - 1].state === state) {
 				aliveNeighborCount++;
@@ -19,14 +19,14 @@ var automaton = function(shortName, longName, startingConfigs) {
 				aliveNeighborCount++;
 			}
 		}
-		
+
 		if (x > 0 && grid[y][x - 1].state === state) {
 			aliveNeighborCount++;
 		}
 		if (x < (grid.width - 1) && grid[y][x + 1].state === state) {
 			aliveNeighborCount++;
 		}
-		
+
 		if (y < (grid.height - 1)) {
 			if (x > 0 && grid[y + 1][x - 1].state === state) {
 				aliveNeighborCount++;
@@ -38,15 +38,15 @@ var automaton = function(shortName, longName, startingConfigs) {
 				aliveNeighborCount++;
 			}
 		}
-		
+
 		return aliveNeighborCount;
 	}
 
-	this.spawnRandomStartingConfig = function() {
+	this.spawnRandomStartingConfig = function () {
 		this.startingConfigs[randomInt(this.startingConfigs.length - 1)]();
 	}
 
-	this.spawnStartingCells = function(spawnFunc) {
+	this.spawnStartingCells = function (spawnFunc) {
 		spawnFunc();
 	}
 
@@ -54,13 +54,13 @@ var automaton = function(shortName, longName, startingConfigs) {
 
 // Automata inits
 var aumaConway = new automaton('conway', "Conway's Game of Life", [StartingCells.random]);
-aumaConway.think = function() {
+aumaConway.think = function () {
 	aliveCellCount = 0;
 	newCellCount = 0;
 	// Iterate through each grid element
 	for (var y = 0; y < grid.height; y++) {
 		for (var x = 0; x < grid.width; x++) {
-			// Count alive neighbours
+			// Count alive neighbors
 			var aliveNeighborCount = this.countNeighbors(x, y, 'alive');
 			var state = grid[y][x].state;
 			if (state === "alive") {
@@ -90,13 +90,13 @@ aumaConway.think = function() {
 }
 
 var aumaBrian = new automaton('brian', "Brian's Brain", [StartingCells.random, StartingCells.oneByTwo, StartingCells.twoByTwo]);
-aumaBrian.think = function() {
+aumaBrian.think = function () {
 	aliveCellCount = 0;
 	newCellCount = 0;
 	// Iterate through each grid element
 	for (var y = 0; y < grid.height; y++) {
 		for (var x = 0; x < grid.width; x++) {
-			// Count alive neighbours
+			// Count alive neighbors
 			var aliveNeighborCount = this.countNeighbors(x, y, 'alive');
 			var state = grid[y][x].state;
 			if (state === "alive") {
@@ -118,7 +118,7 @@ aumaBrian.think = function() {
 }
 
 var aumaLangton = new automaton('langton', "Langton's Ant", [StartingCells.langton]);
-aumaLangton.think = function() {
+aumaLangton.think = function () {
 	aliveCellCount = 0;
 	newCellCount = 0;
 	// Iterate through each grid element

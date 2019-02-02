@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" >
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.js"></script>
 	<script src="StartingCells.js"></script>
@@ -13,17 +14,18 @@
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap-theme.css">
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
 
 	<div id="controls">
 		<div>
 			<input type="checkbox" id="button-fade" onchange="onCheckFade(this)">
-				Fade Dead Pixels
+			Fade Dead Pixels
 			</input>
 		</div>
 
 		<div>
-			<select id="simselect" onchange="onChangeSimSelect(this)">
+			<select id="simSelect" onchange="onChangeSimSelect(this)">
 				<option value="conway">Conway's Game of Life</option>
 				<option value="brian">Brian's Brain</option>
 				<option value="langton">Langton's Ant</option>
@@ -31,7 +33,7 @@
 		</div>
 
 		<div>
-			<select id="spawnselect" onchange="onChangeSpawnSelect(this)">
+			<select id="spawnSelect" onchange="onChangeSpawnSelect(this)">
 				<option value="2x2">2x2</option>
 				<option value="1x2">1x2</option>
 				<option value="random">Random</option>
@@ -40,7 +42,7 @@
 		</div>
 
 		<div>
-			<select id="sizeselect" onchange="onChangeSizeSelect(this)">
+			<select id="sizeSelect" onchange="onChangeSizeSelect(this)">
 				<option value="1">1</option>
 				<option value="2">2</option>
 				<option value="4">4</option>
@@ -71,7 +73,7 @@
 		</div>
 
 		<div>
-			<span>tick: </span>
+			<span>Tick: </span>
 			<span id="time">0</span>
 		</div>
 
@@ -96,4 +98,5 @@
 	</canvas>
 
 </body>
+
 </html>

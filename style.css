@@ -12,8 +12,8 @@ button, select {
 #controls {
 	position: fixed;
 	height: 100%;
-	//padding-left: 10px;
-	//padding-top: 10px;
+	padding-left: 8px;
+	padding-top: 8px;
 	background: linear-gradient(90deg, black, rgba(0, 0, 0, 0));
 }
 canvas {

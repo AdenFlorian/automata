@@ -2,7 +2,7 @@ var StartingCells = {
 
 	langton: {
 		name: 'langton',
-		spawn: function() {
+		spawn: function () {
 			for (var x = 0; x < grid.width; x++) {
 				for (var y = 0; y < grid.height; y++) {
 					grid[y][x].state = "dead";
@@ -17,31 +17,31 @@ var StartingCells = {
 
 	random: {
 		name: 'random',
-		spawn: function() {
+		spawn: function () {
 			var x, y;
 			for (x = 0; x < grid.width; x++) {
 				for (y = 0; y < grid.height; y++) {
 					if (y === 1919) {
 						console.log("YYYY " + y);
 					}
-					var randnum = Math.random();
+					var randNum = Math.random();
 					if (automaton === "Langton's Ant") {
-						if (randnum > .9999) {
+						if (randNum > .9999) {
 							grid[y][x].state = "antOnDeadLeft";
-						} else if(randnum > .998) {
+						} else if (randNum > .998) {
 							grid[y][x].state = "antOnDeadUp";
-						} else if(randnum > .997) {
+						} else if (randNum > .997) {
 							grid[y][x].state = "antOnDeadRight";
-						} else if(randnum > .996) {
+						} else if (randNum > .996) {
 							grid[y][x].state = "antOnDeadDown";
-						} else if(randnum > .95) {
+						} else if (randNum > .95) {
 							grid[y][x].state = "alive";
 						} else {
 							grid[y][x].state = "dead";
 						}
 					} else {
-						var rannn = Math.random() > 0.91 ? "alive" : "dead";
-						grid[y][x].state = rannn;
+						var moreRandom = Math.random() > 0.91 ? "alive" : "dead";
+						grid[y][x].state = moreRandom;
 					}
 					newGrid[y][x].state = grid[y][x].state;
 				}
@@ -51,7 +51,7 @@ var StartingCells = {
 
 	twoByTwo: {
 		name: '2x2',
-		spawn: function() {
+		spawn: function () {
 			for (var x = 0; x < grid.width; x++) {
 				for (var y = 0; y < grid.height; y++) {
 					grid[y][x].state = "dead";
@@ -69,7 +69,7 @@ var StartingCells = {
 
 	oneByTwo: {
 		name: '1x2',
-		spawn: function() {
+		spawn: function () {
 			for (var x = 0; x < grid.width; x++) {
 				for (var y = 0; y < grid.height; y++) {
 					grid[y][x].state = "dead";
