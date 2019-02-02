@@ -2,14 +2,15 @@
  *	@author David Valachovic
  */
 
+import {automata, automataNames} from './automata';
+import {Grids} from './Grid';
+import {CellSpawner} from './CellSpawner';
+
 "use strict";
+
 
 // TODO Make a selector for choosing a structure to spawn when clicking
 
-// Grids
-var grid = [];
-var newGrid = [];
-var spawnGrid = [];
 
 // Canvas vars
 var context;
@@ -24,19 +25,18 @@ var lastTime;
 var timeStep = 1;	// How many steps to think of before rendering
 
 // Settings
-var pixelSizes = [1, 2, 4, 8, 16, 32];
-var pixelSize = 2;	// Multiples of 2 (1, 2, 4, 8, 16, etc.)
+const pixelSizes = [1, 2, 4, 8, 16, 32];
+global.pixelSize = 2;	// Multiples of 2 (1, 2, 4, 8, 16, etc.)
 var nextPixelSize;
-var targetFPS = 999;
 var actualFPS;
 var fadeSpeed = 1;	// 1 to 255
 var fadeEnabled = true;
 var automaton;
 var startingConfiguration;
 
-var aliveCellCount = 0;
+global.aliveCellCount = 0;
 var aliveCellCountElement;
-var newCellCount = 0;
+global.newCellCount = 0;
 var newCellCountElement;
 
 // On click spawn cell selected structure
@@ -44,17 +44,17 @@ var selectedClickSpawnStructureElement;
 
 // Flags
 var restartNextTick = false;
-var modes = ['simulator', 'creator'];
+const modes = ['simulator', 'creator'];
 var mode = 'simulator';
 
-var cell = function (x, y, size, color) {
+global.cell = function (x, y, size, color) {
 	this.x = x;
 	this.y = y;
 	this.size = size;
 	this.color = color;
 }
 
-var color = function (r, g, b, a) {
+const color = function (r, g, b, a) {
 	this.r = r;
 	this.g = g;
 	this.b = b;
@@ -94,10 +94,10 @@ $(function () {
 	$('#mode-button').val(mode);
 
 	scaleCanvasToWindow(context);
-	setGridSizeFromCanvas(grid, canvas, pixelSize);
+	setGridSizeFromCanvas(Grids.grid, canvas, pixelSize);
 
-	init2DArray(grid);
-	init2DArray(newGrid);
+	init2DArray(Grids.grid);
+	init2DArray(Grids.newGrid);
 
 	// Creates an ImageData object to store pixels to go on canvas
 	imgData = context.createImageData(canvas.width, canvas.height);
@@ -117,10 +117,10 @@ function restartSimulation() {
 	restartNextTick = false;
 	pixelSize = nextPixelSize;
 	scaleCanvasToWindow(context);
-	setGridSizeFromCanvas(grid, canvas, pixelSize);
+	setGridSizeFromCanvas(Grids.grid, canvas, pixelSize);
 
-	init2DArray(grid);
-	init2DArray(newGrid);
+	init2DArray(Grids.grid);
+	init2DArray(Grids.newGrid);
 
 	// Creates an ImageData object to store pixels to go on canvas
 	imgData = context.createImageData(canvas.width, canvas.height);
@@ -141,7 +141,7 @@ function draw() {
 	time++;
 	timeElement.text(time);
 
-	var timestamp = getTimeMS();
+	const timestamp = getTimeMS();
 
 	last5DeltaTimes.unshift(timestamp - lastTime);
 
@@ -182,43 +182,43 @@ function getFPS() {
 
 function spawnClickedPixels() {
 	var cell;
-	for (var i = 0; i < spawnGrid.length; i++) {
-		cell = spawnGrid[i];
-		if (cell.x < 0 || cell.x > grid.width - 1 ||
-			cell.y < 0 || cell.y > grid.height - 1) {
+	for (var i = 0; i < Grids.spawnGrid.length; i++) {
+		cell = Grids.spawnGrid[i];
+		if (cell.x < 0 || cell.x > Grids.grid.width - 1 ||
+			cell.y < 0 || cell.y > Grids.grid.height - 1) {
 			console.log("spawn pixels out of bounds, click closer to center!");
 		} else if (automaton.shortName === "Langton's Ant") {
-			grid[cell.y][cell.x].state = "antOnDeadUp";
+			Grids.grid[cell.y][cell.x].state = "antOnDeadUp";
 		} else {
-			grid[cell.y][cell.x].state = "alive";
+			Grids.grid[cell.y][cell.x].state = "alive";
 		}
 	}
-	spawnGrid = [];
+	Grids.spawnGrid = [];
 }
 
 var swap = function (x) {return x};
 
 function copyNewGridToGrid() {
-	// Copy newGrid over grid
-	// Don't use newGrid.slice()
-	for (var y = 0; y < grid.height; y++) {
-		for (var x = 0; x < grid.width; x++) {
-			grid[y][x].state = newGrid[y][x].state;
-			grid[y][x].changed = newGrid[y][x].changed;
+	// Copy Grids.newGrid over grid
+	// Don't use Grids.newGrid.slice()
+	for (var y = 0; y < Grids.grid.height; y++) {
+		for (var x = 0; x < Grids.grid.width; x++) {
+			Grids.grid[y][x].state = Grids.newGrid[y][x].state;
+			Grids.grid[y][x].changed = Grids.newGrid[y][x].changed;
 		}
 	}
-	/*for (var y = 0; y < grid.height; y++) {
-			grid[y] = newGrid[y].slice();
+	/*for (var y = 0; y < Grids.grid.height; y++) {
+			Grids.grid[y] = Grids.newGrid[y].slice();
 	}*/
-	//newGrid = swap(grid, grid = newGrid);
+	//Grids.newGrid = swap(Grids.grid, grid = Grids.newGrid);
 }
 
 function gridToCanvas() {
 	// Iterate through each grid element
-	for (var y = 0; y < grid.height; y++) {
-		for (var x = 0; x < grid.width; x++) {
-			if (grid[y][x].state === "alive") {
-				if (grid[y][x].changed) {
+	for (var y = 0; y < Grids.grid.height; y++) {
+		for (var x = 0; x < Grids.grid.width; x++) {
+			if (Grids.grid[y][x].state === "alive") {
+				if (Grids.grid[y][x].changed) {
 					colorPixel(x, y);
 				}
 			} else {
@@ -231,21 +231,21 @@ function gridToCanvas() {
 }
 
 function colorPixel(x, y) {
-	var r = (x / grid.width) * 255;
-	var g = (y / grid.height) * 255;
-	var b = ((grid.width - x) / grid.width) * 255;
-	const middleHoz = (-1 * Math.abs(((x - (grid.width / 2)) * (1 / (grid.width / 6))))) + 1;
-	const middleVer = (-1 * Math.abs(((y - (grid.height / 2)) * (1 / (grid.height / 6))))) + 1;
+	var r = (x / Grids.grid.width) * 255;
+	var g = (y / Grids.grid.height) * 255;
+	var b = ((Grids.grid.width - x) / Grids.grid.width) * 255;
+	const middleHoz = (-1 * Math.abs(((x - (Grids.grid.width / 2)) * (1 / (Grids.grid.width / 6))))) + 1;
+	const middleVer = (-1 * Math.abs(((y - (Grids.grid.height / 2)) * (1 / (Grids.grid.height / 6))))) + 1;
 	const middle = Math.max((middleHoz + middleVer) * (255 / 4), 0);
 	r += middle;
 	g += middle;
 	b += middle;
 	const x2 = x * 4 * pixelSize;
-	const y2 = y * 4 * grid.width * pixelSize * pixelSize;
+	const y2 = y * 4 * Grids.grid.width * pixelSize * pixelSize;
 	var offset;
 	for (var i = 0; i < pixelSize; i++) {
 		for (var j = 0; j < pixelSize; j++) {
-			offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
+			offset = x2 + y2 + (i * 4 * Grids.grid.width * pixelSize) + (j * 4);
 			imgData.data[0 + offset] = r;
 			imgData.data[1 + offset] = g;
 			imgData.data[2 + offset] = b;
@@ -256,11 +256,11 @@ function colorPixel(x, y) {
 function fadePixel(x, y) {
 	const rgb = getRGB(x, y);
 	const x2 = x * 4 * pixelSize;
-	const y2 = y * 4 * grid.width * pixelSize * pixelSize;
+	const y2 = y * 4 * Grids.grid.width * pixelSize * pixelSize;
 	var offset;
 	for (var i = 0; i < pixelSize; i++) {
 		for (var j = 0; j < pixelSize; j++) {
-			offset = x2 + y2 + (i * 4 * grid.width * pixelSize) + (j * 4);
+			offset = x2 + y2 + (i * 4 * Grids.grid.width * pixelSize) + (j * 4);
 			imgData.data[0 + offset] = rgb.r;
 			imgData.data[1 + offset] = rgb.g;
 			imgData.data[2 + offset] = rgb.b;
@@ -271,7 +271,7 @@ function fadePixel(x, y) {
 function getRGB(x, y) {
 	if (!fadeEnabled) return {r: 0, g: 0, b: 0}
 
-	const offset = (x * 4 * pixelSize) + (y * 4 * grid.width * pixelSize * pixelSize);
+	const offset = (x * 4 * pixelSize) + (y * 4 * Grids.grid.width * pixelSize * pixelSize);
 
 	return {
 		r: imgData.data[0 + offset] - fadeSpeed,
@@ -318,11 +318,11 @@ function setGridSizeFromCanvas(grid, canvas, pixelSize) {
 
 function init2DArray(array) {
 	// Initialize to 2 dimensional arrays
-	for (var i = 0; i < grid.width; i++) {
+	for (var i = 0; i < Grids.grid.width; i++) {
 		array[i] = [];
 	}
 	for (var y = 0; y < array.length; y++) {
-		for (var x = 0; x < grid.width; x++) {
+		for (var x = 0; x < Grids.grid.width; x++) {
 			array[y][x] = new Object();
 		}
 	}

@@ -1,3 +1,7 @@
+
+import {StartingCells} from './StartingCells'
+import {Grids} from './Grid';
+
 var automaton = function (shortName, longName, startingConfigs) {
 
 	this.startingConfigs = startingConfigs;
@@ -9,32 +13,32 @@ var automaton = function (shortName, longName, startingConfigs) {
 		var aliveNeighborCount = 0;
 
 		if (y > 0) {
-			if (x > 0 && grid[y - 1][x - 1].state === state) {
+			if (x > 0 && Grids.grid[y - 1][x - 1].state === state) {
 				aliveNeighborCount++;
 			}
-			if (grid[y - 1][x].state === state) {
+			if (Grids.grid[y - 1][x].state === state) {
 				aliveNeighborCount++;
 			}
-			if (x < (grid.width - 1) && grid[y - 1][x + 1].state === state) {
+			if (x < (Grids.grid.width - 1) && Grids.grid[y - 1][x + 1].state === state) {
 				aliveNeighborCount++;
 			}
 		}
 
-		if (x > 0 && grid[y][x - 1].state === state) {
+		if (x > 0 && Grids.grid[y][x - 1].state === state) {
 			aliveNeighborCount++;
 		}
-		if (x < (grid.width - 1) && grid[y][x + 1].state === state) {
+		if (x < (Grids.grid.width - 1) && Grids.grid[y][x + 1].state === state) {
 			aliveNeighborCount++;
 		}
 
-		if (y < (grid.height - 1)) {
-			if (x > 0 && grid[y + 1][x - 1].state === state) {
+		if (y < (Grids.grid.height - 1)) {
+			if (x > 0 && Grids.grid[y + 1][x - 1].state === state) {
 				aliveNeighborCount++;
 			}
-			if (grid[y + 1][x].state === state) {
+			if (Grids.grid[y + 1][x].state === state) {
 				aliveNeighborCount++;
 			}
-			if (x < (grid.width - 1) && grid[y + 1][x + 1].state === state) {
+			if (x < (Grids.grid.width - 1) && Grids.grid[y + 1][x + 1].state === state) {
 				aliveNeighborCount++;
 			}
 		}
@@ -58,32 +62,32 @@ aumaConway.think = function () {
 	aliveCellCount = 0;
 	newCellCount = 0;
 	// Iterate through each grid element
-	for (var y = 0; y < grid.height; y++) {
-		for (var x = 0; x < grid.width; x++) {
+	for (var y = 0; y < Grids.grid.height; y++) {
+		for (var x = 0; x < Grids.grid.width; x++) {
 			// Count alive neighbors
 			var aliveNeighborCount = this.countNeighbors(x, y, 'alive');
-			var state = grid[y][x].state;
+			var state = Grids.grid[y][x].state;
 			if (state === "alive") {
 				aliveCellCount++;
 				if (aliveNeighborCount < 2) {
-					newGrid[y][x].state = "dead";
+					Grids.newGrid[y][x].state = "dead";
 				} else if (aliveNeighborCount == 2 || aliveNeighborCount == 3) {
-					newGrid[y][x].state = "alive";
+					Grids.newGrid[y][x].state = "alive";
 				} else {
-					newGrid[y][x].state = "dead";
+					Grids.newGrid[y][x].state = "dead";
 				}
 			} else {
 				if (aliveNeighborCount == 3) {
-					newGrid[y][x].state = "alive";
+					Grids.newGrid[y][x].state = "alive";
 					newCellCount++;
 				} else {
-					newGrid[y][x].state = "dead";
+					Grids.newGrid[y][x].state = "dead";
 				}
 			}
-			if (state === newGrid[y][x].state) {
-				newGrid[y][x].changed = false;
+			if (state === Grids.newGrid[y][x].state) {
+				Grids.newGrid[y][x].changed = false;
 			} else {
-				newGrid[y][x].changed = true;
+				Grids.newGrid[y][x].changed = true;
 			}
 		}
 	}
@@ -94,22 +98,22 @@ aumaBrian.think = function () {
 	aliveCellCount = 0;
 	newCellCount = 0;
 	// Iterate through each grid element
-	for (var y = 0; y < grid.height; y++) {
-		for (var x = 0; x < grid.width; x++) {
-			var state = grid[y][x].state;
+	for (var y = 0; y < Grids.grid.height; y++) {
+		for (var x = 0; x < Grids.grid.width; x++) {
+			var state = Grids.grid[y][x].state;
 			if (state === "alive") {
 				aliveCellCount++;
-				newGrid[y][x].state = "dying";
+				Grids.newGrid[y][x].state = "dying";
 			} else if (state === "dying") {
-				newGrid[y][x].state = "dead";
+				Grids.newGrid[y][x].state = "dead";
 			} else if (this.countNeighbors(x, y, 'alive') === 2) {
-				newGrid[y][x].state = "alive";
+				Grids.newGrid[y][x].state = "alive";
 				newCellCount++;
 			}
-			if (state === newGrid[y][x]) {
-				newGrid[y][x].changed = false;
+			if (state === Grids.newGrid[y][x]) {
+				Grids.newGrid[y][x].changed = false;
 			} else {
-				newGrid[y][x].changed = true;
+				Grids.newGrid[y][x].changed = true;
 			}
 		}
 	}
@@ -120,101 +124,101 @@ aumaLangton.think = function () {
 	aliveCellCount = 0;
 	newCellCount = 0;
 	// Iterate through each grid element
-	for (var y = 0; y < grid.height; y++) {
-		for (var x = 0; x < grid.width; x++) {
+	for (var y = 0; y < Grids.grid.height; y++) {
+		for (var x = 0; x < Grids.grid.width; x++) {
 			// Dead goes right, alive goes left
-			var state = grid[y][x].state;
+			var state = Grids.grid[y][x].state;
 			if (state === "antOnAliveLeft") {
-				newGrid[y][x].state = "dead";
-				if (y < (grid.height - 1)) {
-					if (newGrid[y + 1][x].state === "alive") {
-						newGrid[y + 1][x].state = "antOnAliveDown";
+				Grids.newGrid[y][x].state = "dead";
+				if (y < (Grids.grid.height - 1)) {
+					if (Grids.newGrid[y + 1][x].state === "alive") {
+						Grids.newGrid[y + 1][x].state = "antOnAliveDown";
 					} else {
-						newGrid[y + 1][x].state = "antOnDeadDown";
+						Grids.newGrid[y + 1][x].state = "antOnDeadDown";
 					}
 				}
 			} else if (state === "antOnAliveUp") {
-				newGrid[y][x].state = "dead";
+				Grids.newGrid[y][x].state = "dead";
 				if (x > 0) {
-					if (newGrid[y][x - 1].state === "alive") {
-						newGrid[y][x - 1].state = "antOnAliveLeft";
+					if (Grids.newGrid[y][x - 1].state === "alive") {
+						Grids.newGrid[y][x - 1].state = "antOnAliveLeft";
 					} else {
-						newGrid[y][x - 1].state = "antOnDeadLeft";
+						Grids.newGrid[y][x - 1].state = "antOnDeadLeft";
 					}
 				}
 			} else if (state === "antOnAliveRight") {
-				newGrid[y][x].state = "dead";
+				Grids.newGrid[y][x].state = "dead";
 				if (y > 0) {
-					if (newGrid[y - 1][x].state === "alive") {
-						newGrid[y - 1][x].state = "antOnAliveUp";
+					if (Grids.newGrid[y - 1][x].state === "alive") {
+						Grids.newGrid[y - 1][x].state = "antOnAliveUp";
 					} else {
-						newGrid[y - 1][x].state = "antOnDeadUp";
+						Grids.newGrid[y - 1][x].state = "antOnDeadUp";
 					}
 				}
 			} else if (state === "antOnAliveDown") {
-				newGrid[y][x].state = "dead";
-				if (x < (grid.width - 1)) {
-					if (newGrid[y][x + 1].state === "alive") {
-						newGrid[y][x + 1].state = "antOnAliveRight";
+				Grids.newGrid[y][x].state = "dead";
+				if (x < (Grids.grid.width - 1)) {
+					if (Grids.newGrid[y][x + 1].state === "alive") {
+						Grids.newGrid[y][x + 1].state = "antOnAliveRight";
 					} else {
-						newGrid[y][x + 1].state = "antOnDeadRight";
+						Grids.newGrid[y][x + 1].state = "antOnDeadRight";
 					}
 				}
 			} else if (state === "antOnDeadLeft") {
-				newGrid[y][x].state = "alive";
+				Grids.newGrid[y][x].state = "alive";
 				if (y > 0) {
-					if (newGrid[y - 1][x].state === "alive") {
-						newGrid[y - 1][x].state = "antOnAliveUp";
+					if (Grids.newGrid[y - 1][x].state === "alive") {
+						Grids.newGrid[y - 1][x].state = "antOnAliveUp";
 					} else {
-						newGrid[y - 1][x].state = "antOnDeadUp";
+						Grids.newGrid[y - 1][x].state = "antOnDeadUp";
 					}
 				}
 			} else if (state === "antOnDeadUp") {
-				newGrid[y][x].state = "alive";
-				if (x < (grid.width - 1)) {
-					if (newGrid[y][x + 1].state === "alive") {
-						newGrid[y][x + 1].state = "antOnAliveRight";
+				Grids.newGrid[y][x].state = "alive";
+				if (x < (Grids.grid.width - 1)) {
+					if (Grids.newGrid[y][x + 1].state === "alive") {
+						Grids.newGrid[y][x + 1].state = "antOnAliveRight";
 					} else {
-						newGrid[y][x + 1].state = "antOnDeadRight";
+						Grids.newGrid[y][x + 1].state = "antOnDeadRight";
 					}
 				}
 			} else if (state === "antOnDeadRight") {
-				newGrid[y][x].state = "alive";
-				if (y < (grid.height - 1)) {
-					if (newGrid[y + 1][x].state === "alive") {
-						newGrid[y + 1][x].state = "antOnAliveDown";
+				Grids.newGrid[y][x].state = "alive";
+				if (y < (Grids.grid.height - 1)) {
+					if (Grids.newGrid[y + 1][x].state === "alive") {
+						Grids.newGrid[y + 1][x].state = "antOnAliveDown";
 					} else {
-						newGrid[y + 1][x].state = "antOnDeadDown";
+						Grids.newGrid[y + 1][x].state = "antOnDeadDown";
 					}
 				}
 			} else if (state === "antOnDeadDown") {
-				newGrid[y][x].state = "alive";
+				Grids.newGrid[y][x].state = "alive";
 				if (x > 0) {
-					if (newGrid[y][x - 1].state === "alive") {
-						newGrid[y][x - 1].state = "antOnAliveLeft";
+					if (Grids.newGrid[y][x - 1].state === "alive") {
+						Grids.newGrid[y][x - 1].state = "antOnAliveLeft";
 					} else {
-						newGrid[y][x - 1].state = "antOnDeadLeft";
+						Grids.newGrid[y][x - 1].state = "antOnDeadLeft";
 					}
 				}
 			} else if (state === "alive") {
-				//newGrid[y][x].state = "alive";
+				//Grids.newGrid[y][x].state = "alive";
 			} else {
-				//newGrid[y][x].state = "dead";
+				//Grids.newGrid[y][x].state = "dead";
 			}
-			if (state === newGrid[y][x].state) {
-				newGrid[y][x].changed = false;
+			if (state === Grids.newGrid[y][x].state) {
+				Grids.newGrid[y][x].changed = false;
 			} else {
-				newGrid[y][x].changed = true;
+				Grids.newGrid[y][x].changed = true;
 			}
 		}
 	}
 }
 
 // Holds names of different automata for picking a random one
-var automataNames = ['conway', 'brian', 'langton'];
+export const automataNames = ['conway', 'brian', 'langton'];
 
 // Object to access automata by short names
-var automata = {
+export const automata = {
 	'conway': aumaConway,
 	'brian': aumaBrian,
 	'langton': aumaLangton
